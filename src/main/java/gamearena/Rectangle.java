@@ -1,9 +1,13 @@
+package gamearena;
+
+import java.awt.*;
+
 /**
  * Models a simple, solid rectangle. 
  * This class represents a Rectabgle object. When combined with the GameArena class,
  * instances of the Rectangle class can be displayed on the screen.
  */
-public class Rectangle 
+public class Rectangle extends Drawable
 {
 	// The following instance variables define the
 	// information needed to represent a Rectangle
@@ -14,8 +18,8 @@ public class Rectangle
 	private double yPosition;			// The Y coordinate of this Rectangle
 	private double width;				// The width of this Rectangle
 	private double height;				// The height of this Rectangle
-	private int layer;					// The layer of this ball is on.
-	private String colour;				// The colour of this Rectangle
+	private final int layer;					// The layer of this ball is on.
+	private Color colour;				// The colour of this Rectangle
 
 										// Permissable colours are:
 										// BLACK, BLUE, CYAN, DARKGREY, GREY,
@@ -31,7 +35,7 @@ public class Rectangle
 	 * @param h The height of the Rectangle (in pixels)
 	 * @param col The colour of the Rectangle (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or #RRGGBB)
 	 */
-	public Rectangle(double x, double y, double w, double h, String col)
+	public Rectangle(double x, double y, double w, double h, Color col)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -50,7 +54,7 @@ public class Rectangle
 	 * @param col The colour of the Rectangle (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or #RRGGBB)
 	 * @param layer The layer this ball is to be drawn on. Objects with a higher layer number are always drawn on top of those with lower layer numbers.
 	 */
-	public Rectangle(double x, double y, double w, double h, String col, int layer)
+	public Rectangle(double x, double y, double w, double h, Color col, int layer)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -133,19 +137,10 @@ public class Rectangle
 	}
 
 	/**
-	 * Obtains the layer of this Ball.
-	 * @return the layer of this Ball.
-	 */
-	public int getLayer()
-	{
-		return layer;
-	}
-
-	/**
 	 * Obtains the colour of this Rectangle.
 	 * @return a textual description of the colour of this Rectangle.
 	 */
-	public String getColour()
+	public Color getColour()
 	{
 		return colour;
 	}
@@ -154,7 +149,7 @@ public class Rectangle
 	 * Sets the colour of this Rectangle.
 	 * @param c the new colour of this Rectangle, as a String value. Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW.
 	 */
-	public void setColour(String c)
+	public void setColour(Color c)
 	{
 		colour = c;
 	}
@@ -180,5 +175,11 @@ public class Rectangle
 	public boolean collides(Rectangle r)
 	{
 		return (xPosition + width > r.xPosition && xPosition < r.xPosition + r.width) && (yPosition + height > r.yPosition && yPosition < r.yPosition + r.height);
+	}
+
+	@Override
+	public void draw(Graphics2D graphics) {
+		graphics.setColor(colour);
+		graphics.fillRect((int)xPosition, (int)yPosition, (int)width, (int)height);
 	}
 }

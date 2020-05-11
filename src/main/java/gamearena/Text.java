@@ -1,10 +1,14 @@
+package gamearena;
+
+import java.awt.*;
+
 /**
  * Models a simple piece of text. 
  * This class represents a Text object. When combined with the GameArena class,
  * instances of the Text class can be displayed on the screen to show display
  * an appropriate piece of text.
  */
-public class Text
+public class Text extends Drawable
 {
 	// The following instance variables define the
 	// information needed to represent a line.
@@ -14,9 +18,9 @@ public class Text
 	private double xPosition;			// The X coordinate of the start of this text 
 	private double yPosition;			// The Y coordinate of the start of this text 
 	private int size;					// The font size of this text 
-	private int layer;					// The layer this text is drawn on
+	private final int layer;					// The layer this text is drawn on
 	private String text;				// The actual text to display
-	private String colour;				// The colour of this text
+	private Color colour;				// The colour of this text
 
 										// Permissable colours are:
 										// BLACK, BLUE, CYAN, DARKGREY, GREY,
@@ -64,7 +68,7 @@ public class Text
 	 * Obtains the colour of this Text.
 	 * @return a textual description of the colour of this Text.
 	 */
-	public String getColour()
+	public Color getColour()
 	{
 		return colour;
 	}
@@ -79,15 +83,6 @@ public class Text
 	}
 
 	/**
-	 * Obtains the layer of this Text.
-	 * @return the layer of this Text.
-	 */
-	public int getLayer()
-	{
-		return layer;
-	}
-
-	/**
 	 * Constructor. Creates a new piece of text at the given coordinates.
 	 *
 	 * @param text The text to display 
@@ -97,7 +92,7 @@ public class Text
 	 * @param col The colour of the line (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 * @param layer The layer this line is to be drawn on. Objects with a higher layer number are always drawn on top of those with lower layer numbers. 
 	 */
-	public Text(String text, int size, double x, double y, String col, int layer)
+	public Text(String text, int size, double x, double y, Color col, int layer)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -116,7 +111,7 @@ public class Text
 	 * @param y The y co-ordinate of the text
 	 * @param col The colour of the line (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 */
-	public Text(String text, int size, double x, double y, String col)
+	public Text(String text, int size, double x, double y, Color col)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -141,7 +136,7 @@ public class Text
 	 * 
 	 * @param colour The new colour of this text. (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or #RRGGBB)
 	 */
-	public void setColour(String colour)
+	public void setColour(Color colour)
 	{
 		this.colour = colour;
 	}
@@ -162,6 +157,13 @@ public class Text
 	public void setYPosition(double y)
 	{
 		this.yPosition = y;
+	}
+
+	@Override
+	public void draw(Graphics2D graphics) {
+		graphics.setFont(new Font("SansSerif", Font.BOLD, size));
+		graphics.setColor(colour);
+		graphics.drawString(text, (float)xPosition, (float)yPosition);
 	}
 
 }

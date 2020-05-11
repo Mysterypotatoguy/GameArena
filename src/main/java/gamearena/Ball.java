@@ -1,9 +1,13 @@
+package gamearena;
+
+import java.awt.*;
+
 /**
  * Models a simple solid sphere. 
  * This class represents a Ball object. When combined with the GameArena class,
  * instances of the Ball class can be displayed on the screen.
  */
-public class Ball 
+public class Ball extends Drawable
 {
 	// The following instance variables define the
 	// information needed to represent a Ball
@@ -13,8 +17,7 @@ public class Ball
 	private double xPosition;			// The X coordinate of this Ball
 	private double yPosition;			// The Y coordinate of this Ball
 	private double size;				// The diameter of this Ball
-	private int layer;					// The layer of this ball is on.
-	private String colour;				// The colour of this Ball
+	private Color colour;				// The colour of this Ball
 
 										// Permissable colours are:
 										// BLACK, BLUE, CYAN, DARKGREY, GREY,
@@ -28,7 +31,7 @@ public class Ball
 	 * @param diameter The diameter of the Ball (in pixels)
 	 * @param col The colour of the Ball (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 */
-	public Ball(double x, double y, double diameter, String col)
+	public Ball(double x, double y, double diameter, Color col)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -45,7 +48,7 @@ public class Ball
 	 * @param col The colour of the Ball (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 * @param layer The layer this ball is to be drawn on. Objects with a higher layer number are always drawn on top of those with lower layer numbers.
 	 */
-	public Ball(double x, double y, double diameter, String col, int layer)
+	public Ball(double x, double y, double diameter, Color col, int layer)
 	{
 		this.xPosition = x;
 		this.yPosition = y;
@@ -109,19 +112,10 @@ public class Ball
 	}
 
 	/**
-	 * Obtains the layer of this Ball.
-	 * @return the layer of this Ball.
-	 */
-	public int getLayer()
-	{
-		return layer;
-	}
-
-	/**
 	 * Obtains the colour of this Ball.
 	 * @return a textual description of the colour of this Ball.
 	 */
-	public String getColour()
+	public Color getColour()
 	{
 		return colour;
 	}
@@ -130,7 +124,7 @@ public class Ball
 	 * Sets the colour of this Ball.
 	 * @param c the new colour of this Ball, as a String value. Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or #RRGGBB.
 	 */
-	public void setColour(String c)
+	public void setColour(Color c)
 	{
 		colour = c;
 	}
@@ -160,5 +154,11 @@ public class Ball
 		double distance = Math.sqrt(dx*dx+dy*dy);
 
 		return distance < size/2 + b.size/2;
+	}
+
+	@Override
+	public void draw(Graphics2D graphics) {
+		graphics.setColor(colour);
+		graphics.fillOval((int)(xPosition - size/2), (int)(yPosition - size/2), (int)size, (int)size);
 	}
 }

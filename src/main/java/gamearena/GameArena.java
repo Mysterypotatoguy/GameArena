@@ -1,3 +1,5 @@
+package gamearena;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
@@ -20,9 +22,9 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 
 	private boolean exiting = false; 
 
-	private ArrayList<Object> things = new ArrayList<Object>();
+	private final ArrayList<Drawable> things = new ArrayList<>();
 
-	private HashMap<String, Color> colours = new HashMap<>();
+	private final HashMap<String, Color> colours = new HashMap<>();
 
 	private boolean up = false;
 	private boolean down = false;
@@ -221,50 +223,9 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 			{
 				graphics.clearRect(0,0, arenaWidth, arenaHeight);
 
-				for (Object o : things)
+				for (Drawable d : things)
 				{
-					if (o instanceof Ball)
-					{
-						Ball b = (Ball) o;
-						graphics.setColor(this.getColourFromString(b.getColour()));
-						graphics.fillOval((int)(b.getXPosition() - b.getSize()/2), (int)(b.getYPosition() - b.getSize()/2), (int)b.getSize(), (int)b.getSize());
-					}
-
-					if (o instanceof Rectangle)
-					{
-						Rectangle r = (Rectangle) o;
-						graphics.setColor(this.getColourFromString(r.getColour()));
-						graphics.fillRect((int)r.getXPosition(), (int)r.getYPosition(), (int)r.getWidth(), (int)r.getHeight());
-					}
-
-					if (o instanceof Line)
-					{
-						Line l = (Line) o;
-						graphics.setColor(this.getColourFromString(l.getColour()));
-						graphics.setStroke(new BasicStroke((float)l.getWidth()));
-
-						float sx = (float)l.getXStart();
-						float sy = (float)l.getYStart();
-						float ex = (float)l.getXEnd();
-						float ey = (float)l.getYEnd();
-
-						if (l.getArrowSize() > 0)
-						{
-							float arrowRatio = (float) (1.0 - ((l.getWidth() * l.getArrowSize()) / l.getLength()));
-							ex = sx + ((ex - sx) * arrowRatio); 
-							ey = sy + ((ey - sy) * arrowRatio); 
-							graphics.fillPolygon(l.getArrowX(), l.getArrowY(), 3);
-						}
-						graphics.draw(new Line2D.Float(sx,sy,ex,ey));
-					}
-
-					if (o instanceof Text)
-					{
-						Text t = (Text) o;
-						graphics.setFont(new Font("SansSerif", Font.BOLD, t.getSize()));
-						graphics.setColor(this.getColourFromString(t.getColour()));
-						graphics.drawString(t.getText(),(float)t.getXPosition(), (float)t.getYPosition());
-					}
+					d.draw(graphics);
 				}
 			}
 					
@@ -272,36 +233,12 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 		}
 	}
 
-	//
-	// Shouldn't really handle colour this way, but the student's haven't been introduced
-	// to constants properly yet, hmmm....
-	// 
-	private Color getColourFromString(String col)
-	{
-		Color c = colours.get(col.toUpperCase());
-
-		if (c == null && col.startsWith("#"))
-		{
-			int r = Integer.valueOf( col.substring( 1, 3 ), 16 );
-			int g = Integer.valueOf( col.substring( 3, 5 ), 16 );
-			int b = Integer.valueOf( col.substring( 5, 7 ), 16 );
-
-			c = new Color(r,g,b);
-			colours.put(col.toUpperCase(), c);
-		}
-
-		if (c == null)
-			c = Color.WHITE;
-
-		return c;
-	}
-
 	/**
 	 * Adds a given Object to the drawlist, maintaining z buffering order. 
 	 *
-	 * @param o the object to add to the drawlist.
+	 * @param draw the object to add to the drawlist.
 	 */
-	private void addThing(Object o, int layer)
+	private void addThing(Drawable draw, int layer)
 	{
 		boolean added = false;
 
@@ -327,23 +264,12 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 				for (int i=0; i<things.size(); i++)
 				{
 					int l = 0;
-					Object obj = things.get(i);
-
-					if (obj instanceof Ball)
-						l = ((Ball)obj).getLayer();
-
-					if (obj instanceof Rectangle)
-						l = ((Rectangle)obj).getLayer();
-
-					if (obj instanceof Line)
-						l = ((Line)obj).getLayer();
-
-					if (obj instanceof Text)
-						l = ((Text)obj).getLayer();
+					Drawable d = things.get(i);
+					l = d.getLayer();
 
 					if (layer < l)
 					{
-						things.add(i,o);
+						things.add(i,d);
 						added = true;
 						break;
 					}
@@ -351,7 +277,7 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 
 				// If there are no items in the list with an equivalent or higher layer, append this object to the end of the list.
 				if (!added)
-					things.add(o);
+					things.add(draw);
 			}
 		}
 	}
@@ -359,13 +285,19 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 	/**
 	 * Remove an object from the drawlist. 
 	 *
-	 * @param o the object to remove from the drawlist.
+	 * @param d the object to remove from the drawlist.
 	 */
-	private void removeObject(Object o)
+	private void removeObject(Drawable d)
 	{
 		synchronized (this)
 		{
-			things.remove(o);
+			things.remove(d);
+		}
+	}
+
+	public void add(Drawable... ds) {
+		for(Drawable d : ds) {
+			addThing(d, d.getLayer());
 		}
 	}
 
@@ -476,7 +408,7 @@ public class GameArena extends JPanel implements Runnable, KeyListener, MouseLis
 	public void pause()
 	{
 		try { Thread.sleep(20); }
-		catch (Exception e) {};
+		catch (Exception e) {}
 	}
 
  	public void keyPressed(KeyEvent e) 

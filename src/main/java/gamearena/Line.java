@@ -1,9 +1,14 @@
+package gamearena;
+
+import java.awt.*;
+import java.awt.geom.Line2D;
+
 /**
  * Models a simple line. 
  * This class represents a Line object. When combined with the GameArena class,
  * instances of the Line class can be displayed on the screen.
  */
-public class Line 
+public class Line extends Drawable
 {
 	// The following instance variables define the
 	// information needed to represent a line.
@@ -16,11 +21,11 @@ public class Line
 	private double yEnd;						// The Y coordinate of the end of this line
 	private double width;						// The thickness of the line
 	private double arrowSize;					// Size of the arrowhead on this line
-	private int[] arrowX = new int[3];			// Optinal coordinates of an arrowhead on this line (x)
-	private int[] arrowY = new int[3];			// Optinal coordinates of an arrowhead on this line (y)
+	private final int[] arrowX = new int[3];			// Optinal coordinates of an arrowhead on this line (x)
+	private final int[] arrowY = new int[3];			// Optinal coordinates of an arrowhead on this line (y)
 
-	private int layer;							// The layer this line is drawn on
-	private String colour = "WHITE";			// The colour of this line
+	private final int layer;							// The layer this line is drawn on
+	private final Color colour;            			// The colour of this line
 												// Permissable colours are:
 												// BLACK, BLUE, CYAN, DARKGREY, GREY,
 												// GREEN, DARKGREEN, LIGHTGREY, MAGENTA, ORANGE,
@@ -135,18 +140,9 @@ public class Line
 	 * Obtains the colour of this Line.
 	 * @return a textual description of the colour of this Line.
 	 */
-	public String getColour()
+	public Color getColour()
 	{
 		return colour;
-	}
-
-	/**
-	 * Obtains the layer of this Line.
-	 * @return the layer of this Line.
-	 */
-	public int getLayer()
-	{
-		return layer;
 	}
 
 	/**
@@ -177,7 +173,7 @@ public class Line
 	 * @param col The colour of the Line (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 * @param lay The layer the Line is to be drawn on. Objects with a higher layer number are always drawn on top of those with lower layer numbers.
 	 */
-	public Line(double x1, double y1, double x2, double y2, double thickness, String col, int lay)
+	public Line(double x1, double y1, double x2, double y2, double thickness, Color col, int lay)
 	{
 		width = thickness;
 		colour = col;
@@ -195,7 +191,7 @@ public class Line
 	 * @param thickness The width of the Line (in pixels)
 	 * @param col The colour of the Line (Permissable colours are: BLACK, BLUE, CYAN, DARKGREY, GREY, GREEN, LIGHTGREY, MAGENTA, ORANGE, PINK, RED, WHITE, YELLOW or ##RRGGBB)
 	 */
-	public Line(double x1, double y1, double x2, double y2, double thickness, String col)
+	public Line(double x1, double y1, double x2, double y2, double thickness, Color col)
 	{
 		width = thickness;
 		colour = col;
@@ -227,5 +223,25 @@ public class Line
 		arrowY[0] = (int) yEnd;
 		arrowY[1] = (int) ((yStart + ly * arrowRatio) + dx * arrowSize);
 		arrowY[2] = (int) ((yStart + ly * arrowRatio) - dx * arrowSize);
+	}
+
+	@Override
+	public void draw(Graphics2D graphics) {
+		graphics.setColor(colour);
+		graphics.setStroke(new BasicStroke((float)width));
+
+		float sx = (float)xStart;
+		float sy = (float)yStart;
+		float ex = (float)xEnd;
+		float ey = (float)yEnd;
+
+		if (arrowSize > 0)
+		{
+			float arrowRatio = (float) (1.0 - ((width * arrowSize) / getLength()));
+			ex = sx + ((ex - sx) * arrowRatio);
+			ey = sy + ((ey - sy) * arrowRatio);
+			graphics.fillPolygon(arrowX, arrowY, 3);
+		}
+		graphics.draw(new Line2D.Float(sx,sy,ex,ey));
 	}
 }
